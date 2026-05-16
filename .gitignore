@@ -1,0 +1,29 @@
+# Dependency directories
+node_modules/
+jspm_packages/
+web_modules/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Operating System files
+.DS_Store
+Thumbs.db
+
+# Project folders (as requested to be ignored initially)
+frontend/
+backend/
+automation/
+sandbox/
