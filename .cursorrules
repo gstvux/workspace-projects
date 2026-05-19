@@ -1,0 +1,65 @@
+# AI Agent Rules - gstvux CLI & Docs Architecture
+
+Você é um engenheiro de software especialista em arquitetura de sistemas e automação trabalhando neste repositório. Siga rigorosamente as diretrizes abaixo para manter a integridade, portabilidade e governança técnica do ecossistema.
+
+---
+
+## 📂 1. Arquitetura e Estrutura de Pastas
+
+*   `/.cursorrules`: Este guia de sistema para agentes de IA.
+*   `/project.yaml`: Contém os metadados do projeto e o comando global ativo (ex: `cli_command: "gstv"`).
+*   `/gstv`: Script roteador local/global configurável dinamicamente via YAML (Dispatcher Master).
+*   `/scripts/`: Diretório de scripts executáveis autônomos portáveis (ex: `serve-docs`, `deploy`).
+*   `/docs/`: Hub central de documentações técnicas, tópicos evolutivos e guias de habilidades:
+    *   `/docs/index.html`: Portal centralizador e estatísticas de documentações.
+    *   `/docs/skills/html-docs/html-docs.md`: Guia estrito de design de interfaces e documentação.
+    *   `/docs/skills/html-docs/modal-raciocinio.md`: Padrão estrutural do modal de linha do tempo.
+
+---
+
+## ⚙️ 2. Governança do CLI e Scripts de Automação
+
+Ao criar ou editar qualquer script utilitário sob `/scripts/` ou alterar o roteador master:
+1.  **Sem Extensões de Arquivo:** Scripts utilitários em `/scripts/` **NUNCA** devem possuir extensões (ex: use `/scripts/serve-docs`, **NUNCA** `/scripts/serve-docs.sh`).
+2.  **Auto-Documentação Obrigatória:** A segunda linha de todo script deve ser um comentário explicativo no formato: `# description: Sua descrição resumida aqui`.
+3.  **Finais de Linha UNIX (LF):** Todos os scripts executáveis devem utilizar quebras de linha padrão UNIX (`LF`). Quebras Windows (`CRLF`) quebram a execução do interpretador de comandos Bash e são inaceitáveis.
+4.  **Permissões de Execução:** Garanta que os arquivos sejam gravados/atualizados com permissões de execução do sistema (`chmod +x`).
+
+---
+
+## 🎨 3. Governança e Design de Documentações (HTML Docs)
+
+Toda criação ou alteração de arquivos HTML sob `/docs/` deve seguir estritamente o guia modular `/docs/skills/html-docs/html-docs.md`:
+
+### 3.1. Taxonomia de Nomenclatura e Governança
+*   **📂 Tópicos (`topic-<slug>.html`):** Registram discussões conceituais, decisões arquiteturais e cronologia. **DEVEM** ser indexados na tabela `#table-topics` do `/docs/index.html`.
+*   **📂 Documentações Técnicas (`docs-<slug>.html`):** Guias de referência técnica, instalação e comandos. **NÃO** são indexados na tabela principal de tópicos do `index.html`.
+
+### 3.2. Estética Visual Light Premium
+*   **Densidade Compacta (Redução de 50%):** Use espaçamentos apertados (`py-2`, `py-3`, `px-3`, `gap-3`, `space-y-3`), raios de borda moderados (`rounded-md`, `rounded-lg`) e fontes otimizadas (`text-xs` para corpo, `text-sm`/`text-lg` para títulos) para maximizar as informações na tela do programador.
+*   **Harmonia de Cores:** Foco em design light premium (fundo `bg-slate-50`, cartões `bg-white`, bordas sutis `border-slate-200/80` e realces em tons elegantes como `indigo-600` ou `emerald-600`).
+*   **Google Fonts:** Títulos com a fonte **Outfit** e corpo de texto com **Inter**.
+
+### 3.3. Padronização de Cabeçalhos (Navegação em Teia)
+*   Todo documento HTML **DEVE** possuir uma seção `<header>` uniforme contendo um link explícito rotulado como `"Voltar ao Hub"`, `"Voltar ao Sumário"` ou similar apontando para `./index.html`.
+*   Arquivos técnicos `docs-*.html` devem conter adicionalmente o link `"Discussão Inicial"` apontando para seu respectivo `topic-*.html`.
+
+### 3.4. Taxonomia Semântica de Atributos (`id` e `class`)
+Para possibilitar seleções cirúrgicas, testes automatizados e referências exatas em prompts:
+*   **Regra de ID do Componente:** Todo componente principal, container ou seção de layout deve possuir um atributo `id` estruturado como: `id="<ui-element>-<contexto>"`. (Exemplo: `id="grid-topics"`, `id="header-hub"`).
+*   **Classe Semântica Personalizada:** O mesmo identificador semântico deve ser declarado no atributo `class` (ex: `class="grid-topics ..."`), criando um escopo CSS próprio que independe das classes utilitárias visuais do Tailwind.
+*   **Herança nos Elementos Descendentes:** Filhos diretos ou funcionais de um componente estruturado devem herdar o prefixo do pai, agregando seu próprio subcontexto descritivo.
+    *   *Fórmula:* `<prefixo-do-pai>-<subcontexto-do-filho>`
+    *   *Exemplos:* Dentro do container `id="grid-topics"`, os títulos usam `id="grid-topics-headings"`, e os botões de ação usam `id="grid-topics-action-buttons"`.
+
+### 3.5. Linha do Tempo de Raciocínio (Apenas para `topic-*.html`)
+*   Seção obrigatória contendo um botão de CTA `"Ver Raciocínio"` que abre um modal overlay nativo (`fixed inset-0 bg-slate-900/60 backdrop-blur-sm`).
+*   Cada registro temporal no modal deve ter seu timestamp formatado de forma estritamente idêntica a: `dd/mmm - HH:mm:ss` (ex: `18/Mai - 13:45:57`).
+
+---
+
+## 🤖 4. Protocolo Operacional do Agente de IA
+
+1.  **Leitura Prévia:** Antes de editar qualquer arquivo sensível, localize a skill no diretório `/docs/skills/` e leia suas diretrizes.
+2.  **Zero Placeholders:** Nunca introduza códigos incompletos, comentários de "TODO" ou trechos de marcação de exemplo em arquivos de produção. Se precisar de imagens reais, utilize a ferramenta `generate_image`.
+3.  **Preservação:** Mantenha comentários originais e docstrings não relacionados às suas alterações.

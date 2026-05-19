@@ -1,0 +1,3 @@
+# Configuração Geral do Projeto e CLI
+project_name: "gstvux-portal"
+cli_command: "gstv"          # Nome do comando global que evocará o CLI

@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# description: Inicia o servidor HTTP local para visualizar a documentação do projeto
+
+# Determina o caminho absoluto da pasta docs de forma robusta a links simbólicos
+REAL_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
+SCRIPT_DIR="$(cd "$(dirname "$REAL_PATH")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+DOCS_DIR="$PROJECT_ROOT/docs"
+
+PORT=8000
+
+echo -e "\033[1;36m==================================================\033[0m"
+echo -e "\033[1;32m      Servidor de Documentação - gstvux.com.br    \033[0m"
+echo -e "\033[1;36m==================================================\033[0m"
+echo -e "📂 Diretório de Docs: \033[33m$DOCS_DIR\033[0m"
+echo -e "🚀 Servidor rodando em: \033[1;34mhttp://localhost:$PORT\033[0m"
+echo -e "🛑 Pressione \033[1;31mCtrl+C\033[0m para encerrar o servidor."
+echo -e "\033[1;36m==================================================\033[0m"
+
+# Verifica se o Python 3 está instalado
+if ! command -v python3 &> /dev/null; then
+    echo -e "\033[1;31m[ERRO] Python 3 não foi encontrado no seu sistema.\033[0m"
+    echo -e "Por favor, instale o Python 3 ou utilize:\n  \033[33mnpx http-server \"$DOCS_DIR\" -p $PORT\033[0m"
+    exit 1
+fi
+
+# Tenta abrir o navegador automaticamente de forma silenciosa e assíncrona
+if command -v xdg-open &> /dev/null; then
+    (sleep 0.5 && xdg-open "http://localhost:$PORT") &> /dev/null &
+elif command -v open &> /dev/null; then
+    (sleep 0.5 && open "http://localhost:$PORT") &> /dev/null &
+fi
+
+# Inicia o servidor HTTP do Python
+python3 -m http.server $PORT -d "$DOCS_DIR"

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arquitetura do CLI de Projetos Reutilizável - topic-gstv-cli-architecture</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Outfit & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen flex flex-col selection:bg-indigo-100 selection:text-indigo-900">
+
+  <!-- Header Compacto -->
+  <header class="bg-white border-b border-slate-200 py-2">
+    <div class="max-w-7xl mx-auto px-3 flex justify-between items-center">
+      <div class="flex items-center space-x-1.5">
+        <div class="w-6 h-6 rounded bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white font-bold text-xs shadow-sm">
+          C
+        </div>
+        <div>
+          <span class="text-[9px] font-semibold tracking-wider text-indigo-600 uppercase">Discussão Inicial (Tópico)</span>
+          <h1 class="text-xs font-bold text-slate-900 leading-tight">Hub de Scripts & CLI Multiprojeto</h1>
+        </div>
+      </div>
+      <a href="./index.html" class="text-xs font-semibold text-slate-500 hover:text-indigo-600 transition-colors">
+        &larr; Voltar ao Hub
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Content Compacto (py-4, text-xs/sm) -->
+  <main class="flex-grow max-w-7xl mx-auto px-3 py-4 w-full">
+    <article class="space-y-4">
+      
+      <!-- Cabeçalho do Artigo -->
+      <div class="border-b border-slate-200 pb-3">
+        <div class="flex items-center space-x-1 text-[10px] text-slate-400 font-semibold mb-1">
+          <span>GOVERNANÇA TÉCNICA</span>
+          <span>&bull;</span>
+          <span>AUTOMAÇÃO</span>
+          <span>&bull;</span>
+          <span class="text-indigo-600">ATIVO</span>
+        </div>
+        <h2 class="text-lg font-extrabold text-slate-900 tracking-tight leading-tight">
+          Arquitetura de CLI Portátil e Reutilizável de Projeto: Caso de Estudo `gstv`
+        </h2>
+        <p class="text-xs text-slate-500 mt-0.5 leading-relaxed">
+          Estudo conceitual da evolução técnica e tomada de decisão para a criação do hub de automação de projetos `gstv` configurável via YAML.
+        </p>
+      </div>
+
+      <!-- Seção 1: Síntese da Conversa -->
+      <section class="space-y-1.5">
+        <h3 class="text-sm font-bold text-slate-900">1. Síntese da Colaboração</h3>
+        <p class="text-xs text-slate-600 leading-relaxed">
+          A necessidade original partiu de um problema cotidiano do desenvolvedor: possuir scripts utilitários isolados em uma pasta <code class="bg-slate-100 px-1 py-0.2 rounded text-[10px] font-mono">scripts/</code> e desejar dispará-los confortavelmente da raiz do projeto ou "plugá-los" no <code class="bg-slate-100 px-1 py-0.2 rounded text-[10px] font-mono">PATH</code> do sistema de forma instantânea. 
+        </p>
+        <p class="text-xs text-slate-600 leading-relaxed">
+          Durante o diálogo, exploramos a tensão clássica entre a poluição do sistema (adicionar múltiplos caminhos locais de desenvolvimento ao <code class="bg-slate-100 px-1 py-0.2 rounded text-[10px] font-mono">PATH</code>) e a facilidade de uso (chamar comandos diretos sem prefixos longos). Optamos pelo padrão de **CLI centralizado e auto-documentado**, expandindo a ideia conceitual para criar um **template universal de automação** que se adapta dinamicamente a diferentes projetos por meio de metadados externos.
+        </p>
+      </section>
+
+      <!-- Seção 2: A Ferramenta e Arquitetura Comentada -->
+      <section class="space-y-2">
+        <h3 class="text-sm font-bold text-slate-900">2. Ferramenta & Arquitetura Proposta</h3>
+        <p class="text-xs text-slate-600 leading-relaxed">
+          A arquitetura implementada baseia-se em três pilares fundamentais, todos projetados para operar com <strong>zero dependências externas</strong>:
+        </p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 my-2">
+          <!-- Card Pilar 1 -->
+          <div class="bg-white border border-slate-200 rounded p-2.5 shadow-sm space-y-1">
+            <div class="text-indigo-600 font-bold text-xs flex items-center space-x-1">
+              <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+              <span>1. project.yaml (Config)</span>
+            </div>
+            <p class="text-[11px] text-slate-500 leading-normal">
+              O arquivo declarativo de configuração na raiz de cada projeto que define a chave <code class="bg-slate-100 text-[10px] px-0.5 rounded font-mono">cli_command</code>. Ele isola a identidade do projeto do código executor.
+            </p>
+          </div>
+          <!-- Card Pilar 2 -->
+          <div class="bg-white border border-slate-200 rounded p-2.5 shadow-sm space-y-1">
+            <div class="text-indigo-600 font-bold text-xs flex items-center space-x-1">
+              <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+              <span>2. O Dispatcher local</span>
+            </div>
+            <p class="text-[11px] text-slate-500 leading-normal">
+              O roteador principal (o script executável <code class="bg-slate-100 text-[10px] px-0.5 rounded font-mono">gstv</code>) encarregado de parsear nativamente o YAML em bash e encaminhar chamadas e parâmetros via <code class="bg-slate-100 text-[10px] px-0.5 rounded font-mono">exec "$@"</code>.
+            </p>
+          </div>
+          <!-- Card Pilar 3 -->
+          <div class="bg-white border border-slate-200 rounded p-2.5 shadow-sm space-y-1">
+            <div class="text-indigo-600 font-bold text-xs flex items-center space-x-1">
+              <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+              <span>3. Relink & GC</span>
+            </div>
+            <p class="text-[11px] text-slate-500 leading-normal">
+              Mecanismo integrado que limpa links simbólicos órfãos no diretório do usuário (<code class="bg-slate-100 text-[10px] px-0.5 rounded font-mono">~/.local/bin</code>) antes de registrar a nova identidade do CLI.
+            </p>
+          </div>
+        </div>
+
+        <p class="text-xs text-slate-600 leading-relaxed">
+          Abaixo, comentamos o cerne lógico do sistema de resolução de caminhos e parsing robusto contidos no roteador:
+        </p>
+
+        <!-- Bloco de Código de Alta Densidade -->
+        <div class="relative bg-slate-900 text-slate-200 rounded p-2 font-mono text-xs group">
+          <button onclick="copyToClipboard(this)" class="absolute top-1.5 right-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] px-1.5 py-0.5 rounded transition-colors duration-150">
+            Copiar
+          </button>
+          <pre><code id="code-router-core"># Resolução dinâmica e robusta a links simbólicos (O "Symlink Trap" resolvido)
+REAL_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
+PROJECT_ROOT="$(cd "$(dirname "$REAL_PATH")" && pwd)"
+SCRIPTS_DIR="$PROJECT_ROOT/scripts"
+
+# Leitura nativa rápida de arquivos YAML (0 dependências de npm ou pip)
+CLI_NAME=$(grep -E "^cli_command:" "$PROJECT_ROOT/project.yaml" | head -n 1 | sed -E 's/^cli_command:[[:space:]]*["'\'' ]?([^"'\''[:space:]]+)["'\'' ]?.*$/\1/')
+[ -z "$CLI_NAME" ] && CLI_NAME="gstv"</code></pre>
+        </div>
+      </section>
+
+      <!-- Seção 3: Cronologia do Raciocínio com CTA e Modal -->
+      <section class="bg-indigo-50/50 border border-indigo-100 rounded p-3 space-y-2">
+        <div class="flex items-center space-x-1.5 text-indigo-900 font-bold text-xs">
+          <svg class="w-4 h-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>Cronologia do Raciocínio Decisional</span>
+        </div>
+        <p class="text-xs text-slate-600 leading-relaxed">
+          A construção desse sistema foi inteiramente evolutiva, debatida passo a passo contra cenários complexos do mundo real. Mapeamos cada consideração, desde a poluição de diretórios globais até a auto-limpeza de links órfãos.
+        </p>
+        
+        <div class="pt-1.5">
+          <button onclick="openModal()" class="inline-flex items-center space-x-1 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold text-xs rounded transition-colors shadow-sm tracking-wide">
+            <span>Ver Raciocínio</span>
+            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+      </section>
+
+      <!-- CTA de Conexão com a Referência Técnica -->
+      <div class="flex items-center justify-between bg-slate-900 text-slate-200 rounded p-2.5 text-xs">
+        <div>
+          <span class="text-[10px] font-bold text-indigo-400 block tracking-wide uppercase">Documentação Técnica</span>
+          <span class="text-xs text-slate-300 font-medium">Consulte os comandos e o manual de instalação.</span>
+        </div>
+        <a href="./docs-gstv-cli-reference.html" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold text-[10px] tracking-wider uppercase rounded transition-colors shadow-sm">
+          Manual de Uso &rarr;
+        </a>
+      </div>
+
+    </article>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 py-3 mt-4">
+    <div class="max-w-7xl mx-auto px-3 text-center text-[10px] text-slate-500">
+      &copy; 2026 gstvux.com.br &bull; Governança Técnica &bull; Todos os direitos reservados.
+    </div>
+  </footer>
+
+  <!-- ==================== MODAL DE CRONOLOGIA ==================== -->
+  <div id="modal-timeline" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden" onclick="closeModalOnOutsideClick(event)">
+    <div class="bg-white rounded border border-slate-200 shadow-2xl max-w-2xl w-full p-4 mx-3 max-h-[85vh] flex flex-col" onclick="event.stopPropagation()">
+      
+      <!-- Cabeçalho Modal -->
+      <div class="flex items-center justify-between border-b border-slate-200 pb-2 mb-3">
+        <div class="flex items-center space-x-1.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-indigo-600 animate-ping"></span>
+          <h3 class="text-sm font-bold text-slate-900">Registro Temporal de Decisões</h3>
+        </div>
+        <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 font-bold text-xs p-1 rounded hover:bg-slate-100 transition-colors">
+          Fechar
+        </button>
+      </div>
+
+      <!-- Conteúdo/Linha do Tempo (Scrollable) -->
+      <div class="overflow-y-auto space-y-3 pr-1 text-xs select-none">
+        
+        <!-- Passo 1 -->
+        <div class="relative pl-5 border-l-2 border-indigo-200">
+          <div class="absolute -left-[6px] top-1.5 w-2.5 h-2.5 rounded-full bg-indigo-600 border border-white"></div>
+          <span class="font-bold font-mono text-[10px] text-indigo-600">18/Mai - 10:14:32</span>
+          <h4 class="font-bold text-slate-900 mt-0.5">Demanda & Planejamento Inicial</h4>
+          <p class="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
+            <strong>Gatilho:</strong> Desejo de rodar scripts da pasta <code class="bg-slate-100 px-0.5 rounded font-mono">/scripts</code> a partir da raiz do projeto e plugá-los globalmente no PATH. Solicitado planejamento prévio.<br>
+            <strong>Solução:</strong> Análise do projeto. Mapeadas 4 abordagens (PATH direto, CLI <code class="bg-slate-100 px-0.5 rounded font-mono">p</code>, Symlinks em <code class="bg-slate-100 px-0.5 rounded font-mono">~/.local/bin</code> e shell aliases). Identificados edge cases: "Symlink Trap" (BASH_SOURCE), line-endings Windows CRLF e colisões globais.
+          </p>
+        </div>
+
+        <!-- Passo 2 -->
+        <div class="relative pl-5 border-l-2 border-indigo-200">
+          <div class="absolute -left-[6px] top-1.5 w-2.5 h-2.5 rounded-full bg-indigo-600 border border-white"></div>
+          <span class="font-bold font-mono text-[10px] text-indigo-600">18/Mai - 10:18:28</span>
+          <h4 class="font-bold text-slate-900 mt-0.5">Definição da Abordagem de CLI Centralizado</h4>
+          <p class="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
+            <strong>Gatilho:</strong> Preferência pela Opção 2 (CLI Dispatcher Centralizado) e pedido de detalhamento técnico (esquema) antes de codificar.<br>
+            <strong>Solução:</strong> Estruturado o design do roteador <code class="bg-slate-100 px-0.5 rounded font-mono">p</code> na raiz. Planejado o cabeçalho de auto-documentação para scripts, forwarding de argumentos (<code class="bg-slate-100 px-0.5 rounded font-mono">exec "$@"</code>) e mapeamento robusto.
+          </p>
+        </div>
+
+        <!-- Passo 3 -->
+        <div class="relative pl-5 border-l-2 border-indigo-200">
+          <div class="absolute -left-[6px] top-1.5 w-2.5 h-2.5 rounded-full bg-indigo-600 border border-white"></div>
+          <span class="font-bold font-mono text-[10px] text-indigo-600">18/Mai - 10:29:46</span>
+          <h4 class="font-bold text-slate-900 mt-0.5">Configuração Dinâmica por YAML</h4>
+          <p class="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
+            <strong>Gatilho:</strong> Ideia de portar o CLI para outros projetos mudando a palavra de invocação global de forma ágil através de um arquivo de configuração (ex: de <code class="bg-slate-100 px-0.5 rounded font-mono">gstv</code> para <code class="bg-slate-100 px-0.5 rounded font-mono">vela</code>).<br>
+            <strong>Solução:</strong> Integração de um arquivo <code class="bg-slate-100 px-0.5 rounded font-mono">project.yaml</code> contendo <code class="bg-slate-100 px-0.5 rounded font-mono">cli_command</code>. Arquitetado um parser nativo YAML puro em Bash e criados comandos internos de linkagem automática.
+          </p>
+        </div>
+
+        <!-- Passo 4 -->
+        <div class="relative pl-5 border-l-2 border-indigo-200">
+          <div class="absolute -left-[6px] top-1.5 w-2.5 h-2.5 rounded-full bg-indigo-600 border border-white"></div>
+          <span class="font-bold font-mono text-[10px] text-indigo-600">18/Mai - 10:45:10</span>
+          <h4 class="font-bold text-slate-900 mt-0.5">Identidade Padrão: gstv</h4>
+          <p class="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
+            <strong>Gatilho:</strong> Correção no design: rejeição do termo genérico <code class="bg-slate-100 px-0.5 rounded font-mono">p</code> como nome padrão. A identidade do roteador local e o fallback global devem ser exclusivamente <code class="bg-slate-100 px-0.5 rounded font-mono">gstv</code>.<br>
+            <strong>Solução:</strong> Reestruturação total do plano nos artefatos. Ajuste de nomes de variáveis, fallbacks internos e caminhos de arquivos para usar a identidade consolidada <code class="bg-slate-100 px-0.5 rounded font-mono">gstv</code>.
+          </p>
+        </div>
+
+        <!-- Passo 5 -->
+        <div class="relative pl-5 border-l-2 border-indigo-200">
+          <div class="absolute -left-[6px] top-1.5 w-2.5 h-2.5 rounded-full bg-indigo-600 border border-white"></div>
+          <span class="font-bold font-mono text-[10px] text-indigo-600">18/Mai - 11:34:37</span>
+          <h4 class="font-bold text-slate-900 mt-0.5">Comando relink e Garbage Collection</h4>
+          <p class="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
+            <strong>Gatilho:</strong> Caso de borda avançado na mudança dinâmica de aliases: se o CLI global ativo for <code class="bg-slate-100 px-0.5 rounded font-mono">vela</code> e for alterado para <code class="bg-slate-100 px-0.5 rounded font-mono">teia</code>, o comando global executado será <code class="bg-slate-100 px-0.5 rounded font-mono">vela relink</code>. Isso precisa limpar o link simbólico antigo <code class="bg-slate-100 px-0.5 rounded font-mono">vela</code> de forma limpa.<br>
+            <strong>Solução:</strong> Renomeação do comando para <code class="bg-slate-100 px-0.5 rounded font-mono">relink</code>. Desenvolvimento de um **Garbage Collector de Symlinks** no Bash que varre <code class="bg-slate-100 px-0.5 rounded font-mono">~/.local/bin</code> procurando links do mesmo projeto para apagá-los de forma dinâmica antes de registrar o novo link.
+          </p>
+        </div>
+
+        <!-- Passo 6 -->
+        <div class="relative pl-5 border-l-2 border-slate-200">
+          <div class="absolute -left-[6px] top-1.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border border-white"></div>
+          <span class="font-bold font-mono text-[10px] text-emerald-600">18/Mai - 11:49:01</span>
+          <h4 class="font-bold text-slate-900 mt-0.5">Consolidação e Documentação</h4>
+          <p class="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
+            <strong>Gatilho:</strong> Aprovação para a execução prática combinada com a criação das documentações HTML de Tópico (<code class="bg-slate-100 px-0.5 rounded font-mono">topic-</code>) e Referência Técnica (<code class="bg-slate-100 px-0.5 rounded font-mono">docs-</code>).<br>
+            <strong>Solução:</strong> Criação física dos arquivos executáveis, configuração do YAML, linkagem global, elaboração das documentações em HTML com visual leve e alta densidade técnica compacta, e registro do tópico no catálogo central.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Rodapé Modal -->
+      <div class="border-t border-slate-200 pt-2.5 mt-3 flex justify-end">
+        <button onclick="closeModal()" class="px-3 py-1 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded transition-colors">
+          Fechar Visualização
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Scripts JavaScript -->
+  <script>
+    function copyToClipboard(button) {
+      const codeElement = button.nextElementSibling.querySelector('code');
+      navigator.clipboard.writeText(codeElement.textContent.trim());
+      button.innerText = 'Copiado!';
+      setTimeout(() => { button.innerText = 'Copiar'; }, 2000);
+    }
+
+    function openModal() {
+      const modal = document.getElementById('modal-timeline');
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden'; // Impede scroll ao fundo
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('modal-timeline');
+      modal.classList.add('hidden');
+      document.body.style.overflow = ''; // Restaura scroll
+    }
+
+    function closeModalOnOutsideClick(event) {
+      if (event.target === document.getElementById('modal-timeline')) {
+        closeModal();
+      }
+    }
+  </script>
+</body>
+</html>

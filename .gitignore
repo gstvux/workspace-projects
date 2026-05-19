@@ -22,8 +22,10 @@ env/
 .DS_Store
 Thumbs.db
 
-# Project folders (as requested to be ignored initially)
-frontend/
-backend/
-automation/
-sandbox/
+# Project folders (updated to prefix taxonomy)
+app-*/
+front-*/
+api-*/
+tool-*/
+auto-*/
+play-*/
